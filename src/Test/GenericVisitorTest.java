@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import exploChallenge.logs.GenericArticle;
+import exploChallenge.logs.GenericAction;
 import exploChallenge.logs.GenericVisitor;
 
 public class GenericVisitorTest {
@@ -14,12 +14,12 @@ public class GenericVisitorTest {
 	
 	@BeforeClass
 	public static void initTest(){
-		byte[] byteArray = new byte[120];
+		double[] doubleArray = new double[120];
 		int[] positions = new int[]{1,3,5,7,9,12,15,19,27};
 		for(int i=0; i<positions.length; i++){
-			byteArray[i]=1;
+			doubleArray[i]=1.5;
 		}
-		visitor = new GenericVisitor(12, byteArray);
+		visitor = new GenericVisitor(12, doubleArray);
 	}
 	
 	@Test

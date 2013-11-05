@@ -12,15 +12,14 @@ import exploChallenge.logs.LogLineReader;
 import exploChallenge.utils.ArrayHelper;
 
 
-public class GenericLogLineReader implements
-		LogLineReader<GenericVisitor, GenericArticle, Boolean> {
+public class GenericLogLineReader implements LogLineReader<GenericVisitor, GenericAction, Boolean> {
 
 	private static final int indexSize = 2;
 	private static final int noRewardValue=0;
 	private Scanner scan;
 	private int nbOfVisitorFeatures;
 	private int nbOfArticleFeatures;
-	private ArrayList<GenericArticle> possibleActions;
+	private ArrayList<GenericAction> possibleActions;
 	private int currentFile;
 	private int lastFile;
 	private String filePrefix;
@@ -45,22 +44,13 @@ public class GenericLogLineReader implements
 		this.lastFile = 0;
 	}
 
-	private byte[] FillArrayFromPositions(String positions, byte[] arrayToFill){
-		Scanner features = new Scanner(positions);
-		features.useDelimiter(" ");
-		while(features.hasNext()){
-			arrayToFill[Integer.parseInt(features.next())-1]=1;
-		}
-		return arrayToFill;
-	}
 	
 	@Override
-	public LogLine<GenericVisitor, GenericArticle, Boolean> read()
-			throws IOException {
+	public LogLine<GenericVisitor, GenericAction, Boolean> read() throws IOException {
 		if(! hasNext())
 			throw new IOException("no next line to read");
 		GenericVisitor user = null;
-		possibleActions = new ArrayList<GenericArticle>();
+		possibleActions = new ArrayList<GenericAction>();
 		String timestamp = "";
 		String line = scan.next();
 		Scanner tokens = new Scanner(line);
@@ -72,36 +62,57 @@ public class GenericLogLineReader implements
 			String type=scanLine.next();
 			String value=scanLine.next();
 			if(type.equals("t")){ 
+				//parsing the timestamp of dataset log line
 				timestamp=value;
 			}
 			if(type.equals("u")){ 
+				//parsing user id, and features vector of the user in the current log line
+				try{
 				Scanner scanId =new Scanner(value);
 				scanId.useDelimiter(">");
 				String id = scanId.next();
 				value = scanId.next();
-				byte[] userFeatures = ArrayHelper.newZeroByteArray(nbOfVisitorFeatures);
-				userFeatures = FillArrayFromPositions(value, userFeatures);
+				double[] userFeatures = new double[nbOfVisitorFeatures];
+				Scanner scanFeatures=new Scanner(value);
+				scanFeatures.useDelimiter(" ");
+				while(scanFeatures.hasNext()){
+					String featurePositionAndValue=scanFeatures.next();
+					Scanner positionAndValueScanner = new Scanner(featurePositionAndValue);
+					positionAndValueScanner.useDelimiter(":");
+					int featureIndex = Integer.parseInt(positionAndValueScanner.next());
+					double featureValue= Double.parseDouble(positionAndValueScanner.next());
+					userFeatures[featureIndex]=featureValue;
+				}
 				user = new GenericVisitor(Long.parseLong(id), userFeatures);
+				}catch(Exception e){
+					user = new GenericVisitor(Long.parseLong(value), null);
+				}
 			}
 			if(type.equals("a")){ 
+				//parsing an action's id, features and reward
 				Scanner scanId =new Scanner(value);
 				scanId.useDelimiter(">");
 				String id = scanId.next();
 				value = scanId.next();
-				Scanner scanReward =new Scanner(value);
-				scanReward.useDelimiter(":");
-				value=scanReward.next();
-				String reward=scanReward.next();
-				byte[] actionFeatures = ArrayHelper.newZeroByteArray(nbOfArticleFeatures);
-				actionFeatures = FillArrayFromPositions(value, actionFeatures);
+				String reward=scanId.next();
+				double[] actionFeatures = new double[nbOfArticleFeatures];
+				Scanner scanFeatures=new Scanner(value);
+				scanFeatures.useDelimiter(" ");
+				while(scanFeatures.hasNext()){
+					String featurePositionAndValue=scanFeatures.next();
+					Scanner positionAndValueScanner = new Scanner(featurePositionAndValue);
+					positionAndValueScanner.useDelimiter(":");
+					int featureIndex = Integer.parseInt(positionAndValueScanner.next());
+					double featureValue= Double.parseDouble(positionAndValueScanner.next());
+					actionFeatures[featureIndex]=featureValue;
+				}
 				double r;
 				try{
 					r=Double.parseDouble(reward);
 				}catch(Exception e){
 					r=noRewardValue;
 				}
-				
-				possibleActions.add(new GenericArticle(Integer.parseInt(id), actionFeatures, r));	
+				possibleActions.add(new GenericAction(Integer.parseInt(id), actionFeatures, r));	
 			}
 		}
 		GenericLogLine logLine = new GenericLogLine(user, possibleActions);
@@ -123,7 +134,7 @@ public class GenericLogLineReader implements
 	}
 
 	@Override
-	public List<GenericArticle> getPossibleActions() {
+	public List<GenericAction> getPossibleActions() {
 		return possibleActions;
 	}
 }

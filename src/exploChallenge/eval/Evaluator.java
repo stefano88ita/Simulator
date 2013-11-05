@@ -28,16 +28,13 @@ public class Evaluator<Context, Action, Reward> {
 
 	public double runEvaluation() {
 		while (generator.hasNext()) {
-			LogLine<Context, Action, Reward> logLine = generator
-					.generateLogLine();
+			LogLine<Context, Action, Reward> logLine = generator.generateLogLine();
 			Action a = policy.getActionToPerform(logLine.getContext(),
 					generator.getPossibleActions());
 			if (!generator.getPossibleActions().contains(a))
 				throw new IllegalChoiceOfArticleException();
 			evalPolicy.evaluate(logLine, a);
-			if (a.equals(logLine.getAction()))
-				policy.updatePolicy(logLine.getContext(), logLine.getAction(),
-						logLine.getReward());
+			policy.updatePolicy(logLine.getContext(), a, logLine.getReward());
 		}
 		return evalPolicy.getResult();
 	}

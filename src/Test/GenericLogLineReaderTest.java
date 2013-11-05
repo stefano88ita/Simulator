@@ -10,7 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import exploChallenge.logs.LogLine;
-import exploChallenge.logs.GenericArticle;
+import exploChallenge.logs.GenericAction;
 import exploChallenge.logs.GenericLogLine;
 import exploChallenge.logs.GenericLogLineReader;
 import exploChallenge.logs.GenericVisitor;
@@ -35,7 +35,7 @@ public class GenericLogLineReaderTest {
 
 	@Test
 	public void testRead() {
-		LogLine<GenericVisitor, GenericArticle, Boolean> line;
+		LogLine<GenericVisitor, GenericAction, Boolean> line;
 		try {
 			line = logLineReader.read();
 		} catch (IOException e) {

@@ -10,7 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import exploChallenge.logs.LogLine;
-import exploChallenge.logs.GenericArticle;
+import exploChallenge.logs.GenericAction;
 import exploChallenge.logs.GenericLogLine;
 import exploChallenge.logs.GenericLogLineReader;
 import exploChallenge.logs.GenericVisitor;
@@ -37,7 +37,7 @@ public class GenericLogLineTest {
 
 	@Test
 	public void testGetRewardGenericArticle() {
-		List<GenericArticle> possibleActions = logLineReader.getPossibleActions();
+		List<GenericAction> possibleActions = logLineReader.getPossibleActions();
 		for(int i=0; i<possibleActions.size();i++){
 			assertTrue(line.getReward(possibleActions.get(i))>=0);
 		}
@@ -45,7 +45,7 @@ public class GenericLogLineTest {
 
 	@Test
 	public void testGetRegret() {
-		List<GenericArticle> possibleActions = logLineReader.getPossibleActions();
+		List<GenericAction> possibleActions = logLineReader.getPossibleActions();
 		for(int i=0; i<possibleActions.size();i++){
 			assertTrue(line.getRegret(possibleActions.get(i))>=0);
 		}

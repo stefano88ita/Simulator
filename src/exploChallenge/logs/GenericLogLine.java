@@ -4,15 +4,15 @@ import java.util.ArrayList;
 
 import exploChallenge.logs.LogLine;
 
-public class GenericLogLine extends LogLine<GenericVisitor, GenericArticle, Boolean> {
-	ArrayList<GenericArticle> possibleActions;
+public class GenericLogLine extends LogLine<GenericVisitor, GenericAction, Boolean> {
+	ArrayList<GenericAction> possibleActions;
 	
-	public GenericLogLine(GenericVisitor visitor, ArrayList<GenericArticle> possibleActions ) {
+	public GenericLogLine(GenericVisitor visitor, ArrayList<GenericAction> possibleActions ) {
 		super(visitor, null, null);
 		this.possibleActions=possibleActions;	
 	} 
 	
-	public Double getReward(GenericArticle article){
+	public Double getReward(GenericAction article){
 		for(int i=0; i<possibleActions.size(); i++){
 			if(article.equals(possibleActions.get(i))){
 				return possibleActions.get(i).getReward();
@@ -21,7 +21,7 @@ public class GenericLogLine extends LogLine<GenericVisitor, GenericArticle, Bool
 		return null;
 	}
 	
-	public Double getRegret(GenericArticle article){
+	public Double getRegret(GenericAction article){
 		Double maxReward=Double.MIN_VALUE;
 		Double myReward=getReward(article);
 		for(int i=0; i<possibleActions.size(); i++){

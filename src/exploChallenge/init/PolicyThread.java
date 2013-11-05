@@ -2,6 +2,7 @@ package exploChallenge.init;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -10,12 +11,14 @@ public class PolicyThread implements Runnable{
 	String dataset;
 	int numFeaturesUser;
 	int numFeaturesArticle;
+	ArrayList<String> params;
 	
-	public PolicyThread(String policyToUse, String dataset, int numFeaturesUser,int numFeaturesArticle){
+	public PolicyThread(String policyToUse, ArrayList<String> params, String dataset, int numFeaturesUser,int numFeaturesArticle){
 		this.policyToUse=policyToUse;
 		this.dataset=dataset;
 		this.numFeaturesUser=numFeaturesUser;
 		this.numFeaturesArticle=numFeaturesArticle;
+		this.params=params;
 	}
 
 	public String DataCorrente() 
@@ -34,12 +37,12 @@ public class PolicyThread implements Runnable{
 	@Override
 	public void run() {
 		try {
-			new SimulatorLauncher(policyToUse, dataset, numFeaturesUser, numFeaturesArticle);
+			new SimulatorLauncher(policyToUse, params, dataset, numFeaturesUser, numFeaturesArticle);
 		} catch (Exception e) {
 			try{
 				  FileWriter fstream = new FileWriter("error-log.txt",true);
 				  BufferedWriter out = new BufferedWriter(fstream);
-				  out.write(DataCorrente()+":: "+policyToUse+"("+dataset+"): "+"Errore nel parsing\n");
+				  out.write(DataCorrente()+":: "+policyToUse+"("+dataset+"): "+"Errore nel parsing: "+e.toString()+"\n");
 				  out.close();
 			}catch (Exception e2){
 				  System.err.println("Error: " + e.getMessage());

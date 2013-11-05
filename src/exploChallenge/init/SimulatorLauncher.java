@@ -1,6 +1,8 @@
 package exploChallenge.init;
 
 import java.io.FileNotFoundException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
 import exploChallenge.eval.EvaluationPolicy;
@@ -8,7 +10,7 @@ import exploChallenge.eval.Evaluator;
 import exploChallenge.eval.MyEvaluationPolicy;
 import exploChallenge.logs.FromFileLogLineGenerator;
 import exploChallenge.logs.LogLineGenerator;
-import exploChallenge.logs.GenericArticle;
+import exploChallenge.logs.GenericAction;
 import exploChallenge.logs.GenericLogLineReader;
 import exploChallenge.logs.GenericVisitor;
 import exploChallenge.policies.ContextualBanditPolicy;
@@ -17,11 +19,13 @@ import exploChallenge.policies.ContextualBanditPolicy;
 public class SimulatorLauncher {
 	String policyToUse;
 	String dataset;
+	ArrayList<String> params;
 	
 	@SuppressWarnings("unchecked")
-	public SimulatorLauncher(String policyToUse, String dataset, int numFeaturesUser,int numFeaturesArticle) throws FileNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public SimulatorLauncher(String policyToUse, ArrayList<String> params, String dataset, int numFeaturesUser,int numFeaturesArticle) throws FileNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		this.policyToUse=policyToUse;
 		this.dataset=dataset;
+		this.params=params;
 		Class<?> c = Class.forName("myPolicy."+this.policyToUse);
 		long t = System.currentTimeMillis();
 		GenericLogLineReader reader = null;
@@ -31,24 +35,33 @@ public class SimulatorLauncher {
 			throw new FileNotFoundException();
 		}		
 		
-		LogLineGenerator<GenericVisitor, GenericArticle, Boolean> generator;
-		generator = new FromFileLogLineGenerator<GenericVisitor, GenericArticle, Boolean>(
+		
+		LogLineGenerator<GenericVisitor, GenericAction, Boolean> generator;
+		generator = new FromFileLogLineGenerator<GenericVisitor, GenericAction, Boolean>(
 				reader);
 
-		ContextualBanditPolicy<GenericVisitor, GenericArticle, Boolean> policy;
-		policy = (ContextualBanditPolicy<GenericVisitor, GenericArticle, Boolean>) c.newInstance();
-
-		EvaluationPolicy<GenericVisitor, GenericArticle, Boolean> evalPolicy;
+		ContextualBanditPolicy<GenericVisitor, GenericAction, Boolean> policy;
+		if(params.size()>0){
+			try {
+				policy = (ContextualBanditPolicy<GenericVisitor, GenericAction, Boolean>) c.getConstructor(params.getClass()).newInstance(params);
+			} catch (Exception e) {
+				System.out.println("Exception:"+e);
+				policy = (ContextualBanditPolicy<GenericVisitor, GenericAction, Boolean>) c.newInstance();
+			}
+		}else{
+			policy = (ContextualBanditPolicy<GenericVisitor, GenericAction, Boolean>) c.newInstance();
+		}
+		EvaluationPolicy<GenericVisitor, GenericAction, Boolean> evalPolicy;
 		String filename=policyToUse+":"+dataset+"("+uniqueCurrentTimeMS()+").csv";
-		evalPolicy = new MyEvaluationPolicy<GenericVisitor, GenericArticle>(filename);
+		evalPolicy = new MyEvaluationPolicy<GenericVisitor, GenericAction>(filename);
 
-		Evaluator<GenericVisitor, GenericArticle, Boolean> eval;
-		eval = new Evaluator<GenericVisitor, GenericArticle, Boolean>(generator,evalPolicy, policy);
+		Evaluator<GenericVisitor, GenericAction, Boolean> eval;
+		eval = new Evaluator<GenericVisitor, GenericAction, Boolean>(generator,evalPolicy, policy);
 
 		eval.runEvaluation();
 		System.out.println(this.policyToUse+": "+(System.currentTimeMillis() - t) +" ms");
 		
-		((MyEvaluationPolicy<GenericVisitor, GenericArticle>) evalPolicy).closeCsv();
+		((MyEvaluationPolicy<GenericVisitor, GenericAction>) evalPolicy).closeCsv();
 	}
 	
 	private static final AtomicLong LAST_TIME_MS = new AtomicLong();

@@ -1,0 +1,4 @@
+Algoritms=MyPolicy;LinUCB:120,0.23
+Dataset=artificial-1.txt
+Userdim=136
+Actiondim=120

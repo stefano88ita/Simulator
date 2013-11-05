@@ -9,7 +9,7 @@ import java.io.IOException;
 import com.csvreader.CsvWriter;
 
 import exploChallenge.logs.LogLine;
-import exploChallenge.logs.GenericArticle;
+import exploChallenge.logs.GenericAction;
 import exploChallenge.logs.GenericLogLine;
 
 
@@ -60,8 +60,8 @@ public class MyEvaluationPolicy<Context, Action> implements
 	@Override
 	public void evaluate(LogLine<Context, Action, Boolean> logLine,
 			Action chosenAction) { 
-		double reward=((GenericArticle)chosenAction).getReward();
-		double regret=((GenericLogLine)logLine).getRegret((GenericArticle)chosenAction);
+		double reward=((GenericAction)chosenAction).getReward();
+		double regret=((GenericLogLine)logLine).getRegret((GenericAction)chosenAction);
 		try {
 			// write out a few records
 			csvOutput.write((number++)+"");
