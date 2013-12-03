@@ -1,4 +1,4 @@
-Algoritms=MyPolicy;LinUCB:120,0.23
-Dataset=artificial-1.txt
+Algoritms=GOBLin:26,0.23,Datasets/Real/del.csv;LinUCB:26,0.23;IndipendentLinUCB:26,0.23
+Dataset=Datasets/Real/del_opp.txt
 Userdim=136
-Actiondim=120
+Actiondim=26

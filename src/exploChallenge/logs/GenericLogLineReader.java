@@ -13,7 +13,8 @@ import exploChallenge.utils.ArrayHelper;
 
 
 public class GenericLogLineReader implements LogLineReader<GenericVisitor, GenericAction, Boolean> {
-
+	
+	//init
 	private static final int indexSize = 2;
 	private static final int noRewardValue=0;
 	private Scanner scan;
@@ -25,6 +26,7 @@ public class GenericLogLineReader implements LogLineReader<GenericVisitor, Gener
 	private String filePrefix;
   
 	private void buildNextScanner() throws FileNotFoundException {
+		//build a scanner for a line
 		this.currentFile++;
 		String file = new Integer(currentFile) + "";
 		while (file.length() < indexSize)
@@ -34,8 +36,8 @@ public class GenericLogLineReader implements LogLineReader<GenericVisitor, Gener
 		scan.useDelimiter("\n");
 	}
 	
-	public GenericLogLineReader(String filePath,
-			int nbOfVisitorFeatures, int nbOfArticleFeatures) throws FileNotFoundException {
+	public GenericLogLineReader(String filePath, int nbOfVisitorFeatures, int nbOfArticleFeatures) throws FileNotFoundException {
+		//constructor
 		this.nbOfVisitorFeatures = nbOfVisitorFeatures;
 		this.nbOfArticleFeatures = nbOfArticleFeatures;
 		this.scan = new Scanner(new File(filePath));
@@ -47,15 +49,16 @@ public class GenericLogLineReader implements LogLineReader<GenericVisitor, Gener
 	
 	@Override
 	public LogLine<GenericVisitor, GenericAction, Boolean> read() throws IOException {
+		//parse a line
 		if(! hasNext())
-			throw new IOException("no next line to read");
+			throw new IOException("no next line to read");	//exception if no more line to read
 		GenericVisitor user = null;
 		possibleActions = new ArrayList<GenericAction>();
 		String timestamp = "";
 		String line = scan.next();
 		Scanner tokens = new Scanner(line);
 		tokens.useDelimiter(",");
-		while(tokens.hasNext()){
+		while(tokens.hasNext()){	//using a string tokenizer
 			String token = tokens.next();
 			Scanner scanLine =new Scanner(token);
 			scanLine.useDelimiter("#");
@@ -121,6 +124,7 @@ public class GenericLogLineReader implements LogLineReader<GenericVisitor, Gener
 	
 	@Override
 	public boolean hasNext() throws IOException {
+		//return true if there's line to read
 		if (scan.hasNext())
 			return true;
 		if (currentFile == lastFile)
@@ -135,6 +139,7 @@ public class GenericLogLineReader implements LogLineReader<GenericVisitor, Gener
 
 	@Override
 	public List<GenericAction> getPossibleActions() {
+		//get possible actions for a timestamp
 		return possibleActions;
 	}
 }

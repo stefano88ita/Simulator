@@ -8,7 +8,7 @@ import org.junit.Test;
 import exploChallenge.logs.GenericAction;
 
 public class GenericArticleTest {
-
+	//test class for generic article
 	static GenericAction article;
 	
 	@BeforeClass

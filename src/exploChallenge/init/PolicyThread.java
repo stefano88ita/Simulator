@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+//this class is a thread that starts a single policy
 public class PolicyThread implements Runnable{
+	
+	//init
 	String policyToUse;
 	String dataset;
 	int numFeaturesUser;
@@ -14,6 +17,7 @@ public class PolicyThread implements Runnable{
 	ArrayList<String> params;
 	
 	public PolicyThread(String policyToUse, ArrayList<String> params, String dataset, int numFeaturesUser,int numFeaturesArticle){
+		//costructor
 		this.policyToUse=policyToUse;
 		this.dataset=dataset;
 		this.numFeaturesUser=numFeaturesUser;
@@ -23,6 +27,7 @@ public class PolicyThread implements Runnable{
 
 	public String DataCorrente() 
     { 
+		//procedure to calculate the date of today, with format: dd/mm/yyyy
 		 Calendar cal = new GregorianCalendar(); 
 		 int giorno = cal.get(Calendar.DAY_OF_MONTH); 
 		 int mese = 1+cal.get(Calendar.MONTH); 
@@ -37,14 +42,16 @@ public class PolicyThread implements Runnable{
 	@Override
 	public void run() {
 		try {
-			new SimulatorLauncher(policyToUse, params, dataset, numFeaturesUser, numFeaturesArticle);
+			new SimulatorLauncher(policyToUse, params, dataset, numFeaturesUser, numFeaturesArticle);	//start the policy
 		} catch (Exception e) {
 			try{
-				  FileWriter fstream = new FileWriter("error-log.txt",true);
+				//exception handling (on error-log.txt)
+				  FileWriter fstream = new FileWriter("Logs/error-log.txt",true);
 				  BufferedWriter out = new BufferedWriter(fstream);
 				  out.write(DataCorrente()+":: "+policyToUse+"("+dataset+"): "+"Errore nel parsing: "+e.toString()+"\n");
 				  out.close();
 			}catch (Exception e2){
+				//if file does not exists the output is on consolle
 				  System.err.println("Error: " + e.getMessage());
 			}
 		}

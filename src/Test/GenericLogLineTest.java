@@ -16,14 +16,14 @@ import exploChallenge.logs.GenericLogLineReader;
 import exploChallenge.logs.GenericVisitor;
 
 public class GenericLogLineTest {
-	
+	//test class for generic log line
 	static GenericLogLine line;
 	static GenericLogLineReader logLineReader;
 	
 	@BeforeClass
 	public static void initTest() throws IOException{
 		try {
-			logLineReader = new GenericLogLineReader("log-test.txt", 136, 120);
+			logLineReader = new GenericLogLineReader("Logs/log-test.txt", 136, 120);
 			line = (GenericLogLine) logLineReader.read();
 		} catch (FileNotFoundException e) {
 			System.out.println("Test file removed");

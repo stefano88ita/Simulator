@@ -2,19 +2,22 @@ package exploChallenge.logs;
 
 public class GenericVisitor {
 
-	private long timestamp;
-	private double[] features;
+	private long userid;	//unique id for visitor
+	private double[] features;	//features vector for user
  
-	public GenericVisitor(long timestamp, double[] features) {
+	public GenericVisitor(long userid, double[] features) {
+		//constructor
 		this.features = features;
-		this.timestamp = timestamp;
+		this.userid = userid;
 	}
  
-	public long getTimestamp() {
-		return timestamp;
+	public long getId() {
+		//returns user id of visitor
+		return userid;
 	}
 
 	public double[] getFeatures() {
+		//returns user's features vector
 		return features;
 	}
 

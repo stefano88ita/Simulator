@@ -3,15 +3,16 @@ import java.io.PrintWriter;
 import org.la4j.factory.CRSFactory;
 import org.la4j.matrix.Matrix;
 
-public class DatasetGenerator {
+//please customize the params for different artificial dataset output
+public class LinUCBDatasetGenerator {
 	public static void main(String[] args) {
-		String filename="artificial-1.txt";
-		double limit=0;
+		//init params
+		String filename="artificial-3.txt";
+		double limit=0.25;
 		int k=10;
 		int b=25;
-		int Min=0;
-		int Max=255;
 		double sum=0;
+		int T=10000;
 		CRSFactory crs = new CRSFactory();
 		int actionIndex=0;
 		
@@ -20,22 +21,23 @@ public class DatasetGenerator {
 			writer = new PrintWriter(filename, "UTF-8");
 		} catch (Exception e) {
 		}
+		//u generation
+		double[][] u=new double[1][b];
+		for(int i=0;i<b;i++){
+			u[0][i]= -1 + (Math.random() * 2);
+			sum+=(u[0][i]*u[0][i]);
+		}
+		sum=Math.sqrt(sum);
+		for(int i=0;i<b;i++){
+			u[0][i]/=sum;
+		}
+		//end u generation
 		
-		for(int time=0;time<10000;time++){
-			//u generation
-			double[][] u=new double[1][b];
-			for(int i=0;i<b;i++){
-				u[0][i]=Min + (int)(Math.random() * ((Max - Min) + 1));
-				sum+=(u[0][i]*u[0][i]);
-			}
-			sum=Math.sqrt(sum);
-			for(int i=0;i<b;i++){
-				u[0][i]/=sum;
-			}
-			//end u generation
+		for(int time=0;time<T;time++){
+			
 			
 			//unique user id is timestamp + 10000
-			int userId = 10000+time;
+			int userId = 1;
 			//end
 			
 			String res="t#"+time+",u#"+userId;
@@ -47,9 +49,10 @@ public class DatasetGenerator {
 				//action features generation
 				double[][] action=new double[1][b];
 				for(int i=0;i<b;i++){
-					action[0][i]=Min + (int)(Math.random() * ((Max - Min) + 1));
+					action[0][i]= -1 + (Math.random() * 2);
 					sum+=(action[0][i]*action[0][i]);
 				}
+				//norm
 				sum=Math.sqrt(sum);
 				for(int i=0;i<b;i++){
 					action[0][i]/=sum;
@@ -62,6 +65,7 @@ public class DatasetGenerator {
 				Matrix features = crs.createMatrix(action);
 				Matrix factorU = crs.createMatrix(u);
 				Double reward = features.multiply(factorU.transpose()).get(0,0);
+				//calculating reward
 				double random=-limit + (Math.random() / (1/(limit*2)));
 				reward+=random;
 				res+=">"+reward;
@@ -71,8 +75,6 @@ public class DatasetGenerator {
 			//end for every action
 			
 		}
-		writer.close();
-
-		
+		writer.close();	
 	}
 }

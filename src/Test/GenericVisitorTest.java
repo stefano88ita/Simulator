@@ -9,7 +9,7 @@ import exploChallenge.logs.GenericAction;
 import exploChallenge.logs.GenericVisitor;
 
 public class GenericVisitorTest {
-
+	//test class for generic visitor
 	static GenericVisitor visitor;
 	
 	@BeforeClass
@@ -28,8 +28,8 @@ public class GenericVisitorTest {
 	}
 
 	@Test
-	public void testGetTimestamp() {
-		assertTrue(visitor.getTimestamp()==12);
+	public void testGetId() {
+		assertTrue(visitor.getId()==12);
 	}
 
 	@Test

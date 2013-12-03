@@ -5,9 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class RandomGenerator implements
-		LogLineGenerator<Integer, Integer, Boolean> {
- 
+public class RandomGenerator implements LogLineGenerator<Integer, Integer, Boolean> {
+	//this class is for test, it generates random line, user and actions / used from for yahoo contest
 	private int nbOfLinesRemaining;
 	private int nbOfContexts;
 	private int nbOfActions;

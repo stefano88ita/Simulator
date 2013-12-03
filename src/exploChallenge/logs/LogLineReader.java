@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface LogLineReader<Context, Action, Reward> {
-
+	//interface for log line reader
 	public LogLine<Context, Action, Reward> read() throws IOException;
 
 	public boolean hasNext() throws IOException;

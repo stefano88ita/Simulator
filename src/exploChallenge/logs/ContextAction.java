@@ -1,7 +1,7 @@
 package exploChallenge.logs;
 
 public class ContextAction<Context, Action> {
-
+	//model an Action object
 	private Action action;
 	private Context context;
 

@@ -8,7 +8,7 @@ import org.junit.Test;
 import exploChallenge.init.SimulatorLauncher;
 
 public class SimulatorLauncherTest {
-
+	//test class for simulator launcher
 	@Test
 	public void testSimulatorLauncher() {
 		assertTrue(true);

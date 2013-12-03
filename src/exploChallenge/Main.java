@@ -10,14 +10,14 @@ import exploChallenge.init.PolicyThread;
 public class Main { 
 	public static void main(String[] args) throws FileNotFoundException {
 		//init
-		System.out.println("start");		
+		System.out.println("simulator is started now");	
 		ArrayList<String> policies=null;
 		ArrayList<ArrayList<String>> parameters=null;
 		String dataset=null;
 		int datasetUserDimensions=0;
 		int datasetActionDimensions=0;
 		
-		//parsing the input configuration file
+		//parsing the input configuration file: policy, pamams, etc...
 		Scanner sc = new Scanner(new File("start_configuration.txt"));
 		sc.useDelimiter("\n");
 		while(sc.hasNext()){
@@ -65,7 +65,7 @@ public class Main {
 		if(!(policies!=null && dataset!=null && datasetUserDimensions!=-1 && datasetActionDimensions!=-1)){
 			System.out.println("Error!Please check your start_configuration.txt file");
 		}else{
-			//starting threads
+			//starting a thread for each policy
 			for(int i=0; i<policies.size(); i++){
 				try {
 					Thread t = new Thread(new PolicyThread(policies.get(i),parameters.get(i),dataset,datasetUserDimensions,datasetActionDimensions));

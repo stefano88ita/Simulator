@@ -10,26 +10,28 @@ import exploChallenge.logs.GenericVisitor;
 import exploChallenge.policies.ContextualBanditPolicy;
 
 public class LinUCB implements ContextualBanditPolicy<GenericVisitor, GenericAction, Boolean> {
-	
-	Matrix Minv, b, W;
+	//init params
+	public Matrix Minv, b, W;
 	CRSFactory crs;
 	double alpha;
 	int d, t;
 	
 	public LinUCB(ArrayList<String> params){
-		this.d=Integer.parseInt(params.get(0));
-		crs = new CRSFactory();
+		//initialization of the object, only the testFirst time (#user if it's called by indipendent lin ucb)
+		this.d=Integer.parseInt(params.get(0));	//d is taken from the input
+		crs = new CRSFactory(); //crs is the matrix generation library
 		Minv=crs.createIdentityMatrix(d);
 		b=crs.createMatrix(1,d);
-		this.alpha=Double.parseDouble(params.get(1));
+		this.alpha=Double.parseDouble(params.get(1));	//alpha is taken from input
 		t=0;
-		W=b.multiply(Minv);
 	}
 	
 	@Override
 	public GenericAction getActionToPerform(GenericVisitor visitor, List<GenericAction> possibleActions) { 
+		W=b.multiply(Minv);
 		double maxScore=0; 
 		GenericAction actionWithMaxScore = null;
+		//prediction phase
 		for(int i=0; i<possibleActions.size(); i++){
 			GenericAction action = possibleActions.get(i);
 			double[][] tmpMatrix= new double[1][action.getFeatures().length];
@@ -43,17 +45,21 @@ public class LinUCB implements ContextualBanditPolicy<GenericVisitor, GenericAct
 				actionWithMaxScore=action;
 			}
 		}
+		//end prediction phase
 		t++;
 		return actionWithMaxScore;
 	}
 
 	@Override
 	public void updatePolicy(GenericVisitor c, GenericAction a, Boolean reward) {
+		//update phase, no tricks, just the procedure of paper
 		double[][] tmpMatrix= new double[1][a.getFeatures().length];
 		tmpMatrix[0]=a.getFeatures();
 		Matrix featuresVector =  crs.createMatrix(tmpMatrix);
 		b = b.add(featuresVector.multiply(a.getReward()));
 		Matrix tmp = Minv.multiply(featuresVector.transpose());
 		Minv = Minv.subtract(tmp.multiply(tmp.transpose()).div(1+featuresVector.multiply(tmp).get(0, 0)));;
+		//update phase
 	}
+	
 }

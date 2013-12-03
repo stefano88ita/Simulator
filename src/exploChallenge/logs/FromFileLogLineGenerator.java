@@ -5,16 +5,18 @@ import java.util.List;
 
 public class FromFileLogLineGenerator<Context, Action, Reward> implements
 		LogLineGenerator<Context, Action, Reward> {
-
+	
+	//init
 	private LogLineReader<Context, Action, Reward> reader;
 
-	public FromFileLogLineGenerator(
-			LogLineReader<Context, Action, Reward> reader) {
+	public FromFileLogLineGenerator(LogLineReader<Context, Action, Reward> reader) {
+		//constructor
 		this.reader = reader;
 	}
   
 	@Override
 	public LogLine<Context, Action, Reward> generateLogLine() {
+		//read line
 		LogLine<Context, Action, Reward> line = null;
 		try {
 			line = reader.read();
@@ -26,6 +28,7 @@ public class FromFileLogLineGenerator<Context, Action, Reward> implements
 
 	@Override
 	public boolean hasNext() {
+		//return true if there's another line avaible
 		try {
 			return reader.hasNext();
 		} catch (IOException e) {
@@ -36,6 +39,7 @@ public class FromFileLogLineGenerator<Context, Action, Reward> implements
 
 	@Override
 	public List<Action> getPossibleActions() {
+		//get possible actions for a timestamp
 		return this.reader.getPossibleActions();
 	}
 
