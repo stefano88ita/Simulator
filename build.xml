@@ -1,0 +1,42 @@
+
+<project default="run">
+
+	<property name="jarFile" value="submission.jar" />
+
+	<path id="classpath">
+		<fileset dir="lib" includes="**/*.jar" />
+	</path>
+
+	<target name="clean">
+		<delete dir="bin" />
+		<delete dir="${jarFile}" />
+	</target>
+
+	<target name="compile" depends="clean">
+		<mkdir dir="bin" />
+		<javac srcdir="src" destdir="bin" includeantruntime="false" classpathref="classpath" />
+	</target>
+
+	<target name="jar" depends="compile">
+		<jar destfile="submission.jar" basedir="bin" excludes="exploChallenge/**">
+			<restrict>
+				<name name="**/*.class" />
+				<archives>
+					<zips>
+						<fileset dir="lib" includes="**/*.jar" />
+					</zips>
+				</archives>
+			</restrict>
+		</jar>
+	</target>
+
+	<target name="run" depends="compile">
+		<java dir="bin" classname="exploChallenge.Main" fork="true">
+			<classpath>
+				<path refid="classpath" />
+				<path location="bin" />
+			</classpath>
+		</java>
+	</target>
+
+</project>

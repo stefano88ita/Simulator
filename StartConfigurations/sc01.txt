@@ -1,0 +1,4 @@
+Algoritms=GOBLin:26,0.23,Datasets/Artificials/ClusterOfUsers/Noise020/10000R2C2U.csv
+Dataset=Datasets/Artificials/ClusterOfUsers/Noise020/10000R2C2U.txt
+Userdim=26
+Actiondim=26

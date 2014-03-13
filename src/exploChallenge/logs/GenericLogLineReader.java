@@ -58,6 +58,8 @@ public class GenericLogLineReader implements LogLineReader<GenericVisitor, Gener
 		String line = scan.next();
 		Scanner tokens = new Scanner(line);
 		tokens.useDelimiter(",");
+		int actionParsed=0;
+		int actionWithNoReward=0;
 		while(tokens.hasNext()){	//using a string tokenizer
 			String token = tokens.next();
 			Scanner scanLine =new Scanner(token);
@@ -92,6 +94,7 @@ public class GenericLogLineReader implements LogLineReader<GenericVisitor, Gener
 				}
 			}
 			if(type.equals("a")){ 
+				actionParsed++;
 				//parsing an action's id, features and reward
 				Scanner scanId =new Scanner(value);
 				scanId.useDelimiter(">");
@@ -114,9 +117,13 @@ public class GenericLogLineReader implements LogLineReader<GenericVisitor, Gener
 					r=Double.parseDouble(reward);
 				}catch(Exception e){
 					r=noRewardValue;
+					actionWithNoReward++;
 				}
 				possibleActions.add(new GenericAction(Integer.parseInt(id), actionFeatures, r));	
 			}
+		}
+		if(actionParsed==actionWithNoReward){
+			return null; //if there are no action with reward skip the line
 		}
 		GenericLogLine logLine = new GenericLogLine(user, possibleActions);
 		return logLine;

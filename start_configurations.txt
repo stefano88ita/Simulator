@@ -1,0 +1,10 @@
+StartConfigurations/sc01.txt
+StartConfigurations/sc02.txt
+StartConfigurations/sc03.txt
+StartConfigurations/sc04.txt
+StartConfigurations/sc05.txt
+StartConfigurations/sc06.txt
+StartConfigurations/sc07.txt
+StartConfigurations/sc09.txt
+StartConfigurations/sc10.txt
+StartConfigurations/sc11.txt

@@ -1,9 +1,13 @@
 package myPolicy;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.la4j.factory.CRSFactory;
 import org.la4j.matrix.Matrix;
+
+import com.csvreader.CsvWriter;
 
 import exploChallenge.logs.GenericAction;
 import exploChallenge.logs.GenericVisitor;
@@ -29,7 +33,7 @@ public class LinUCB implements ContextualBanditPolicy<GenericVisitor, GenericAct
 	@Override
 	public GenericAction getActionToPerform(GenericVisitor visitor, List<GenericAction> possibleActions) { 
 		W=b.multiply(Minv);
-		double maxScore=0; 
+		double maxScore=-9999; 
 		GenericAction actionWithMaxScore = null;
 		//prediction phase
 		for(int i=0; i<possibleActions.size(); i++){
@@ -38,28 +42,32 @@ public class LinUCB implements ContextualBanditPolicy<GenericVisitor, GenericAct
 			tmpMatrix[0]=action.getFeatures();
 			Matrix featuresVector = crs.createMatrix(tmpMatrix);
 			double tmp1= featuresVector.multiply(W.transpose()).get(0, 0);
-			double tmp2= alpha + Math.sqrt(featuresVector.multiply(Minv).multiply(featuresVector.transpose()).get(0, 0) * Math.log(t+1) );
+			double tmp2= alpha * Math.sqrt(featuresVector.multiply(Minv).multiply(featuresVector.transpose()).get(0, 0) * Math.log(t+1) );
 			double actionScore=tmp1+tmp2;
 			if(i==0||actionScore>maxScore){
 				maxScore=actionScore;
 				actionWithMaxScore=action;
 			}
 		}
+		
 		//end prediction phase
 		t++;
 		return actionWithMaxScore;
 	}
 
 	@Override
-	public void updatePolicy(GenericVisitor c, GenericAction a, Boolean reward) {
+	public void updatePolicy(GenericVisitor c, GenericAction a, Boolean reward) {		
 		//update phase, no tricks, just the procedure of paper
 		double[][] tmpMatrix= new double[1][a.getFeatures().length];
 		tmpMatrix[0]=a.getFeatures();
 		Matrix featuresVector =  crs.createMatrix(tmpMatrix);
 		b = b.add(featuresVector.multiply(a.getReward()));
+		
 		Matrix tmp = Minv.multiply(featuresVector.transpose());
 		Minv = Minv.subtract(tmp.multiply(tmp.transpose()).div(1+featuresVector.multiply(tmp).get(0, 0)));;
 		//update phase
+		
+		
 	}
 	
 }

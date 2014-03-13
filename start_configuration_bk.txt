@@ -1,0 +1,4 @@
+Algoritms=GOBLin:26,0.23,Datasets/Real/del.csv;LinUCB:26,0.23;IndipendentLinUCB:26,0.23
+Dataset=Datasets/Real/del_opp.txt
+Userdim=136
+Actiondim=26

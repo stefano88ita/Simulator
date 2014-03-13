@@ -33,15 +33,17 @@ public class MyEvaluationPolicy<Context, Action> implements
 			if (!new File(outputFile).exists())
 			{
 				//write the headers of csv output file
-				csvOutput = new CsvWriter(new FileWriter(outputFile, true), ';');	// ";" is good for excel, for matlab "," and no headers
+				csvOutput = new CsvWriter(new FileWriter(outputFile, true), ',');	// ";" is good for excel, for matlab "," and no headers
+				/*
 				csvOutput.write("NUMBER");
 				csvOutput.write("REWARD");
 				csvOutput.write("CUMULATIVE REWARD");
 				csvOutput.write("REGRET");
 				csvOutput.write("CUMULATIVE REGRET");
 				csvOutput.endRecord();
+				*/
 			}else{
-				csvOutput = new CsvWriter(new FileWriter(outputFile, true), ';');
+				csvOutput = new CsvWriter(new FileWriter(outputFile, true), ',');
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

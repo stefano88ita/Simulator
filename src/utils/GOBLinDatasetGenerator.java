@@ -15,10 +15,11 @@ public class GOBLinDatasetGenerator {
 	public static void main(String[] args) {
 		//init parameters part I
 		String filename="goblin-artificial.txt";
-		int numberOfUser=16;
-		int numberOfSquareCluster=16;
+		int numberOfUser=1;
+		int numberOfSquareCluster=1;
 		String csvFilename="artificialMatrixL.csv";
 		CsvWriter csvOutput=null;
+		double limit=0.3;
 		
 		//generation of matrix L
 		try {
@@ -46,7 +47,7 @@ public class GOBLinDatasetGenerator {
 		
 		
 		//init parameters part I
-		double limit=0;
+		
 		int k=10;
 		int b=25;
 		double sum=0;

@@ -20,6 +20,7 @@ public class GOBLin implements ContextualBanditPolicy<GenericVisitor, GenericAct
 	double alpha;
 	int d, t, n;
 	HashMap<Long, Integer> usersIndexes;
+	Matrix AkronTmp;
 	
 	public GOBLin(ArrayList<String> params){
 		this.d=Integer.parseInt(params.get(0)); //d is the dimension of action features vector
@@ -48,7 +49,9 @@ public class GOBLin implements ContextualBanditPolicy<GenericVisitor, GenericAct
 			b=crs.createMatrix(1,n*d);
 		} catch (Exception e) {;}
 		//calculating A^(-1/2)kroneker
-		Matrix A=L.add(crs.createIdentityMatrix(n));
+		//Matrix A=L.add(crs.createIdentityMatrix(n));
+		Matrix A=L; //already sum identity
+		
 		SingularValueDecompositor decomposer = new SingularValueDecompositor();
 		Matrix[] svd = decomposer.decompose(A, crs);
 		Matrix eigenvectors = svd[0];
@@ -56,7 +59,10 @@ public class GOBLin implements ContextualBanditPolicy<GenericVisitor, GenericAct
 		for(int i=0;i<eigenvalues.rows();i++){
 			eigenvalues.set(i, i, 1/Math.sqrt(eigenvalues.get(i, i)));
 		}
+		
+		
 		Aat12 = eigenvectors.multiply(eigenvalues).multiply(eigenvectors.transpose());	//i use a trick, not the real kroneker :)
+		
 		usersIndexes = new HashMap<Long, Integer>(); //functional array to register index of users
 	}
 	
@@ -66,15 +72,20 @@ public class GOBLin implements ContextualBanditPolicy<GenericVisitor, GenericAct
 		if(!usersIndexes.containsKey(visitor.getId())){
 			usersIndexes.put(visitor.getId(),usersIndexes.size());
 		}
-		int indexOfUser = usersIndexes.get(visitor.getId());
+		
+		int indexOfUser = usersIndexes.get(visitor.getId());;
 		//kroneker trick
-		Matrix AkronTmp=crs.createMatrix(n*d, d);
+		AkronTmp=crs.createMatrix(n*d, d);
+	
 		for(int index1=0; index1<n*d; index1++){
-			AkronTmp.set(index1, index1%d, Aat12.get(indexOfUser,index1%n));
+			//System.out.println(index1/d);
+			//AkronTmp.set(index1, index1%d, Aat12.get(indexOfUser,index1%n));
+			AkronTmp.set(index1, index1%d, Aat12.get(indexOfUser,index1/d));
 		}
 		
+		 
 		W=b.multiply(Minv);
-		double maxScore=0; 
+		double maxScore=-9999; 
 		GenericAction actionWithMaxScore = null;
 		for(int i=0; i<possibleActions.size(); i++){
 			GenericAction action = possibleActions.get(i);
@@ -83,31 +94,44 @@ public class GOBLin implements ContextualBanditPolicy<GenericVisitor, GenericAct
 			userTmp[0]=action.getFeatures();
 			Matrix featuresVector = AkronTmp.multiply(crs.createMatrix(userTmp).transpose()).transpose();
 			double tmp1= featuresVector.multiply(W.transpose()).get(0, 0);
-			double tmp2= alpha + Math.sqrt(featuresVector.multiply(Minv).multiply(featuresVector.transpose()).get(0, 0) * Math.log(t+1) );
+			double tmp2= alpha * Math.sqrt(featuresVector.multiply(Minv).multiply(featuresVector.transpose()).get(0, 0) * Math.log(t+1) );
 			double actionScore=tmp1+tmp2;
 			if(i==0||actionScore>maxScore){
 				maxScore=actionScore;
 				actionWithMaxScore=action;
 				maxActionFeatures=featuresVector;
 			}
+			
+			
 			//end prediction phase	
 		}
 		t++;
-		System.out.println("GOBLin processed item: "+t);	//it's only a debug line
+		if(t%100==0)
+			System.out.println("GOBLin processed item: "+t);	//it's only a debug line
 		
 		return actionWithMaxScore;
 	}
 
 	@Override
 	public void updatePolicy(GenericVisitor c, GenericAction a, Boolean reward) {
+		
 		//update, again like linUCB but different dimensions
-		double[][] tmpMatrix= new double[1][a.getFeatures().length];
+		double[][] tmpMatrix= new double[1][d];
 		tmpMatrix[0]=a.getFeatures();
-		Matrix featuresVector =  maxActionFeatures;
+		/*
+		Matrix featuresVector =  crs.createMatrix(tmpMatrix);
+		*/
+		
+		
+		Matrix featuresVector = AkronTmp.multiply(crs.createMatrix(tmpMatrix).transpose()).transpose();
+		featuresVector = maxActionFeatures;
+		try{
 		b = b.add(featuresVector.multiply(a.getReward()));
+		
 		Matrix tmp = Minv.multiply(featuresVector.transpose());
 		Minv = Minv.subtract(tmp.multiply(tmp.transpose()).div(1+featuresVector.multiply(tmp).get(0, 0)));
 		//end update
 		//System.out.println("update done");	//it's only a debug line
+		}catch(Exception e){System.out.println(b.columns()+" vs "+d);}
 	}
 }

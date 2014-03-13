@@ -59,7 +59,11 @@ public class SimulatorLauncher {
 		String datasetName="";
 		StringTokenizer stringTokenizer = new StringTokenizer(dataset,"/");
 		while(stringTokenizer.hasMoreTokens()) datasetName = stringTokenizer.nextToken();
-		String filename=policyToUse+"--"+datasetName+"("+uniqueCurrentTimeMS()+").csv";
+		//String filename=policyToUse+"--"+datasetName+"("+uniqueCurrentTimeMS()+").csv";
+		if(!(new File("Results/"+datasetName).exists())){
+			(new File("Results/"+datasetName)).mkdir();
+		}
+		String filename = datasetName+"/"+policyToUse+".csv";
 		evalPolicy = new MyEvaluationPolicy<GenericVisitor, GenericAction>(filename);	//evalPolicy is the class that estimate the goodness of policy
 
 		Evaluator<GenericVisitor, GenericAction, Boolean> eval;

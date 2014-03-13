@@ -1,0 +1,4 @@
+Algoritms=CLUBBandit:26,10,1,0.23,0.8;GOBLin:26,0.23,Datasets/Artificials/SingleUser/single0N.csv;LinUCB:26,0.23;IndipendentLinUCB:26,0.23
+Dataset=Datasets/Artificials/SingleUser/single0N.txt
+Userdim=26
+Actiondim=26

@@ -8,7 +8,7 @@ import java.util.Scanner;
 import exploChallenge.init.PolicyThread;
 
 public class Main { 
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) throws FileNotFoundException, InterruptedException {
 		//init
 		System.out.println("simulator is started now");	
 		ArrayList<String> policies=null;
@@ -65,6 +65,7 @@ public class Main {
 		if(!(policies!=null && dataset!=null && datasetUserDimensions!=-1 && datasetActionDimensions!=-1)){
 			System.out.println("Error!Please check your start_configuration.txt file");
 		}else{
+			ArrayList<Thread> threads = new ArrayList<Thread>();
 			//starting a thread for each policy
 			for(int i=0; i<policies.size(); i++){
 				try {
@@ -74,7 +75,6 @@ public class Main {
 					System.out.println(e.toString());
 				}
 			}
-			System.out.println("end");
 		}
 	}
 }

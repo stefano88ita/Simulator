@@ -31,12 +31,14 @@ public class Evaluator<Context, Action, Reward> {
 	public double runEvaluation() {
 		while (generator.hasNext()) { //if there's other log line to read
 			LogLine<Context, Action, Reward> logLine = generator.generateLogLine();	//take the line
-			Action a = policy.getActionToPerform(logLine.getContext(),
-					generator.getPossibleActions());	//ask to policy which action 
-			if (!generator.getPossibleActions().contains(a))	//check for errors
-				throw new IllegalChoiceOfArticleException();
-			evalPolicy.evaluate(logLine, a);	//call the evaluation on the choosen action
-			policy.updatePolicy(logLine.getContext(), a, logLine.getReward());	//call the update funcion of the policy
+			if(logLine!=null){	//cut useless lines
+				Action a = policy.getActionToPerform(logLine.getContext(),
+						generator.getPossibleActions());	//ask to policy which action 
+				if (!generator.getPossibleActions().contains(a))	//check for errors
+					throw new IllegalChoiceOfArticleException();
+				evalPolicy.evaluate(logLine, a);	//call the evaluation on the choosen action
+				policy.updatePolicy(logLine.getContext(), a, logLine.getReward());	//call the update funcion of the policy
+			}
 		}
 		return evalPolicy.getResult();	//print timestamp
 	}
